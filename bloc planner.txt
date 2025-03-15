@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner Interactivo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: transparent;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #ff5e78;
+            color: white;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+        textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            background: transparent;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+                <th>Sábado</th>
+                <th>Domingo</th>
+            </tr>
+        </thead>
+        <tbody id="planner-body">
+        </tbody>
+    </table>
+
+    <script>
+        function saveData() {
+            let data = [];
+            document.querySelectorAll('textarea').forEach((textarea, index) => {
+                data[index] = textarea.value;
+            });
+            localStorage.setItem('plannerData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            let data = JSON.parse(localStorage.getItem('plannerData')) || [];
+            document.querySelectorAll('textarea').forEach((textarea, index) => {
+                textarea.value = data[index] || "";
+            });
+        }
+
+        function createPlanner() {
+            let body = document.getElementById('planner-body');
+            for (let hour = 7; hour <= 23; hour++) {
+                let row = document.createElement('tr');
+                let timeCell = document.createElement('td');
+                timeCell.textContent = `${hour}:00`;
+                row.appendChild(timeCell);
+                
+                for (let day = 0; day < 7; day++) {
+                    let cell = document.createElement('td');
+                    let textarea = document.createElement('textarea');
+                    textarea.addEventListener('input', saveData);
+                    cell.appendChild(textarea);
+                    row.appendChild(cell);
+                }
+                body.appendChild(row);
+            }
+            loadData();
+        }
+
+        document.addEventListener("DOMContentLoaded", createPlanner);
+    </script>
+</body>
+</html>
